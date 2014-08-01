@@ -38,7 +38,7 @@ class ListBoxEnchantments(posX: Int, posY: Int, width: Int, height: Int, texture
                     .canApplyTogether(newEnchant
                     .asInstanceOf[listItemEnchantments]
                     .getEnchantment)) {
-                    if(!deactivate) {
+                    if (!deactivate) {
                         enchantment.activate()
                     }
                 } else {
@@ -53,11 +53,16 @@ class ListBoxEnchantments(posX: Int, posY: Int, width: Int, height: Int, texture
 
     override def actionPerformed(button: GuiButton): Unit = {
         if (data.filter(e => e.asInstanceOf[listItemEnchantments].getLevel != e.data.enchantmentLevel).length > 0) {
-            val list = data.filter(e => e.asInstanceOf[listItemEnchantments].getLevel != 0).flatMap(e => Map(e.data
+            val containedList = data.filter(e => e.asInstanceOf[listItemEnchantments].getLevel != 0)
+
+            val list = containedList.flatMap(e => Map(e.data
                 .enchantmentobj -> e.asInstanceOf[listItemEnchantments]
                 .getLevel)).toMap
             val cost = screen.getContainer.getEnchantmentCost(data)
-            EnchantingPlus.sendToServer(new EnchantPacket(list, cost))
+
+            val oldLevels = containedList.map(e => e.asInstanceOf[listItemEnchantments].getOldLevel)
+
+            EnchantingPlus.sendToServer(new EnchantPacket(list, cost, oldLevels))
         }
     }
 }

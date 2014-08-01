@@ -15,6 +15,8 @@ class listItemEnchantments(enchantmentData: EnchantmentData, x: Int, y: Int, wid
 
     def getLevel: Int = level
 
+    def getOldLevel: Int = enchantmentData.enchantmentLevel
+
     override def getString: String = {
         getTranslatedName(enchantmentData.enchantmentobj, level)
     }

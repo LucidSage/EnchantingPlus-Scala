@@ -32,4 +32,43 @@ object AdvEnchantmentHelper {
         def item = itemStack.getItem
         item.equals(Items.book) || item.equals(Items.enchanted_book)
     }
+
+    def getEnchantmantById(id: Int): Option[Enchantment] = {
+        Enchantment.enchantmentsList(id) match {
+            case enchant: Enchantment => Some(enchant)
+            case _ => None
+        }
+    }
+
+    def getEnchantmentByName(name: String): Option[Enchantment] = {
+        for (enchantment <- Enchantment.enchantmentsList.filter(_ != null)) {
+            if (enchantment.getName.equals(name)) {
+                return Some(enchantment)
+            }
+        }
+        None
+    }
+
+    def getCost(itemStack: ItemStack, enchantment: Enchantment, newLevel: Int, oldLevel: Int): Int = {
+        if (itemStack == null) return 0
+
+        val enchantability = itemStack.getItem.getItemEnchantability
+        if (enchantability == 0) return 0
+
+        val maxLevel = enchantment.getMaxLevel
+        val deltaLevel = newLevel - oldLevel
+
+        val averageEnchantability = (enchantment.getMaxEnchantability(maxLevel) + enchantment.getMinEnchantability(maxLevel)) / 2
+
+        var cost = 0
+        def costForLevel(level: Int): Int = {
+            (level + Math.pow(level, 2)).toInt
+        }
+        if (deltaLevel >= 0) {
+            cost = costForLevel(newLevel) - costForLevel(oldLevel)
+        } else {
+            cost = (-.80 * (costForLevel(oldLevel) - costForLevel(newLevel))).toInt
+        }
+        (cost * averageEnchantability) / (enchantability * 3)
+    }
 }

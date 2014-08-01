@@ -3,7 +3,7 @@ package com.aesireanempire.eplus
 import com.aesireanempire.eplus.blocks.entities.TileEntityAdvEnchantmentTable
 import com.aesireanempire.eplus.gui.elements.{DataProviderEnchantmentData, DataProviderInformation, ListItem, listItemEnchantments}
 import com.aesireanempire.eplus.inventory.{SlotArmor, SlotEnchantment, TableInventory}
-import net.minecraft.enchantment.{Enchantment, EnchantmentData, EnchantmentHelper}
+import net.minecraft.enchantment.{EnchantmentData, EnchantmentHelper}
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.inventory.{Container, IInventory, Slot}
 import net.minecraft.item.ItemStack
@@ -57,50 +57,17 @@ class ContainerAdvEnchantment(player: EntityPlayer, tile: TileEntityAdvEnchantme
         infoProvider.setInfoAt(2, "C:" + getEnchantmentCost(items))
     }
 
-    private def getEnchantmentLevel(effectID: Int): Int = {
-        for (enchantment <- dataProvider.dataSet) {
-            if (enchantment.enchantmentobj.effectId == effectID) {
-                return enchantment.enchantmentLevel
-            }
-        }
-        0
-    }
-
     def getEnchantmentCost(enchantments: Array[ListItem[EnchantmentData]]): Int = {
         var cost = 0
 
         for (item: ListItem[EnchantmentData] <- enchantments) {
             val enchant = item.asInstanceOf[listItemEnchantments]
             val newLevel = enchant.getLevel
-            val oldLevel = getEnchantmentLevel(enchant.getEnchantment.effectId)
+            val oldLevel = enchant.getOldLevel
 
-            cost += calculateCost(enchant.getEnchantment, newLevel, oldLevel)
+            cost += AdvEnchantmentHelper.getCost(tableInventory.getStackInSlot(0), enchant.getEnchantment, newLevel, oldLevel)
         }
         cost
-    }
-
-    private def calculateCost(enchantment: Enchantment, newLevel: Int, oldLevel: Int): Int = {
-        val itemStack = tableInventory.getStackInSlot(0)
-        if (itemStack == null) return 0
-
-        val enchantability = itemStack.getItem.getItemEnchantability
-        if (enchantability == 0) return 0
-
-        val maxLevel = enchantment.getMaxLevel
-        val deltaLevel = newLevel - oldLevel
-
-        val averageEnchantability = (enchantment.getMaxEnchantability(maxLevel) + enchantment.getMinEnchantability(maxLevel)) / 2
-
-        var cost = 0
-        def costForLevel(level: Int): Int = {
-            (level + Math.pow(level, 2)).toInt
-        }
-        if (deltaLevel >= 0) {
-            cost = costForLevel(newLevel) - costForLevel(oldLevel)
-        } else {
-            cost = (-.80 * (costForLevel(oldLevel) - costForLevel(newLevel))).toInt
-        }
-        (cost * averageEnchantability) / (enchantability * 3)
     }
 
     private def getNumberOfBookcases: Float = {

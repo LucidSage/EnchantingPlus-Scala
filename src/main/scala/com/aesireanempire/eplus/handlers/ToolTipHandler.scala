@@ -3,6 +3,7 @@ package com.aesireanempire.eplus.handlers
 import java.io.File
 import java.net.URL
 
+import com.aesireanempire.eplus.AdvEnchantmentHelper
 import net.minecraft.enchantment.Enchantment
 
 import scala.collection.mutable
@@ -45,21 +46,12 @@ object ToolTipHandler {
         val lines: Iterator[String] = Source.fromFile(file).getLines()
         for (line <- lines) {
             val tokens = line.split("=")
-            val enchantment = getEnchantmentByName(tokens(0))
+            val enchantment = AdvEnchantmentHelper.getEnchantmentByName(tokens(0))
 
             if (enchantment.isDefined) {
                 toolTips += enchantment.get -> tokens(1)
             }
         }
         toolTips.toMap
-    }
-
-    private def getEnchantmentByName(name: String): Option[Enchantment] = {
-        for (enchantment <- Enchantment.enchantmentsList.filter(_ != null)) {
-            if (enchantment.getName.equals(name)) {
-                return Some(enchantment)
-            }
-        }
-        None
     }
 }

@@ -5,9 +5,8 @@ import java.io.File
 import com.aesireanempire.eplus.blocks.EplusBlocks
 import com.aesireanempire.eplus.handlers.{ToolTipHandler, ConfigHandler, GUIHandler}
 import com.aesireanempire.eplus.items.EplusItems
-import com.aesireanempire.eplus.network.{CommonProxy, EplusChannelHandler, EplusPacket, PacketHandler}
+import com.aesireanempire.eplus.network.{EplusChannelHandler, EplusPacket, PacketHandler}
 import net.minecraftforge.fml.common.Mod.EventHandler
-import net.minecraftforge.fml.common.{SidedProxy, Mod}
 import net.minecraftforge.fml.common.event._
 import net.minecraftforge.fml.common.network.{FMLOutboundHandler, FMLEmbeddedChannel, NetworkRegistry}
 import net.minecraftforge.fml.relauncher.Side
@@ -15,16 +14,9 @@ import net.minecraftforge.fml.relauncher.Side
 import scala.collection.JavaConverters._
 
 
-@Mod(name = EnchantingPlus.MODNAME, modid = EnchantingPlus.MODID, version = EnchantingPlus.VERSION, modLanguage = "scala")
 object EnchantingPlus {
-    final val MODNAME = "Enchanting Plus"
-    final val MODID = "eplus"
-    final val VERSION = "3.1.0a1"
 
     var channels = collection.mutable.Map.empty[Side, FMLEmbeddedChannel]
-
-    @SidedProxy(clientSide = "com.aesireanempire.eplus.network.ClientProxy", serverSide = "com.aesireanempire.eplus.network.CommonProxy")
-    var proxy: CommonProxy = null
 
     @EventHandler
     def preInit(event: FMLPreInitializationEvent) {
@@ -38,7 +30,7 @@ object EnchantingPlus {
 
     @EventHandler
     def init(event: FMLInitializationEvent) {
-        channels = NetworkRegistry.INSTANCE.newChannel(MODID, new EplusChannelHandler, new PacketHandler).asScala
+        channels = NetworkRegistry.INSTANCE.newChannel(EnchantingPlusMod.MODID, new EplusChannelHandler, new PacketHandler).asScala
 
         //Register WorldGen
         //Register Recipes
@@ -48,7 +40,7 @@ object EnchantingPlus {
 
         //Register Events
         NetworkRegistry.INSTANCE.registerGuiHandler(this, GUIHandler)
-        proxy.init()
+        EnchantingPlusMod.proxy.init()
     }
 
     @EventHandler

@@ -4,14 +4,12 @@ import com.aesireanempire.eplus.blocks.entities.TileEntityAdvEnchantmentTable
 import net.minecraftforge.fml.client.FMLClientHandler
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer
 import net.minecraft.tileentity.TileEntity
-import net.minecraft.util.ResourceLocation
-import net.minecraftforge.client.model.AdvancedModelLoader
-import net.minecraftforge.common.util.ForgeDirection
+import net.minecraft.util.{EnumFacing, ResourceLocation}
 import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL11._
 
 object RenderAdvTable extends TileEntitySpecialRenderer {
-    val model = AdvancedModelLoader.loadModel(new ResourceLocation("eplus", "models/table.tcn"))
+    //val model = AdvancedModelLoader.loadModel(new ResourceLocation("eplus", "models/table.tcn"))
     val texture = new ResourceLocation("eplus", "textures/blocks/table.png")
 
     override def renderTileEntityAt(te: TileEntity, x: Double, y: Double, z: Double, time: Float, var9: Int) {
@@ -23,17 +21,17 @@ object RenderAdvTable extends TileEntitySpecialRenderer {
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
-        te.asInstanceOf[TileEntityAdvEnchantmentTable].direction match {
-            case ForgeDirection.UNKNOWN =>
-            case ForgeDirection.NORTH  | ForgeDirection.UP => glRotated(0, 0, 1, 0)
-            case ForgeDirection.WEST | ForgeDirection.DOWN => glRotated(90, 0, 1, 0)
-            case ForgeDirection.SOUTH => glRotated(180, 0, 1, 0)
-            case ForgeDirection.EAST => glRotated(270, 0, 1, 0)
-        }
+//        te.asInstanceOf[TileEntityAdvEnchantmentTable].direction match {
+//            //case EnumFacing.UNKNOWN =>
+//            case EnumFacing.NORTH  | EnumFacing.UP => glRotated(0, 0, 1, 0)
+//            case EnumFacing.WEST | EnumFacing.DOWN => glRotated(90, 0, 1, 0)
+//            case EnumFacing.SOUTH => glRotated(180, 0, 1, 0)
+//            case EnumFacing.EAST => glRotated(270, 0, 1, 0)
+//        }
 
 
         FMLClientHandler.instance.getClient.renderEngine.bindTexture(texture)
-        model.renderAll()
+        //model.renderAll()
 
         glShadeModel(GL_FLAT)
         glDisable(GL_LINE_SMOOTH)
@@ -52,7 +50,7 @@ object RenderAdvTable extends TileEntitySpecialRenderer {
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
         FMLClientHandler.instance.getClient.renderEngine.bindTexture(texture)
-        model.renderAll()
+        //model.renderAll()
 
         glShadeModel(GL_FLAT)
         glDisable(GL_LINE_SMOOTH)
